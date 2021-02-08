@@ -44,7 +44,7 @@ func getClientSet(config *rest.Config) (*kubernetes.Clientset, error) {
 	return clientSet, nil
 }
 
-func findTargetPod(targetPods []*TargetPod, pod TargetPod) (int, bool) {
+/*func findTargetPod(targetPods []*TargetPod, pod TargetPod) (int, bool) {
 	for i, item := range targetPods {
 		if pod.Equals(item) {
 			return i, true
@@ -58,4 +58,4 @@ func addTargetPod(targetPods *[]*TargetPod, pod *TargetPod) {
 	if !found {
 		*targetPods = append(*targetPods, pod)
 	}
-}
+}*/
