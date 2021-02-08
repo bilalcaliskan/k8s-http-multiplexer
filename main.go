@@ -15,9 +15,11 @@ import (
 )
 
 var (
+	targetPods []*TargetPod
 	clientSet *kubernetes.Clientset
 	client *http.Client
 	kubeConfigPath *string
+	labels []string
 )
 
 func init() {
@@ -54,6 +56,12 @@ func main() {
 	if err != nil {
 		panic(err)
 	}
+
+	for _, v := range config.Requests {
+		labels = append(labels, v.Label)
+	}
+	log.Printf("final labels slice before running pod informer = %v\n", labels)
+	runPodInformer(clientSet, labels)
 
 	router := mux.NewRouter()
 	server := initServer(router, config, fmt.Sprintf(":%d", config.Port), time.Duration(int32(config.WriteTimeoutSeconds)),
