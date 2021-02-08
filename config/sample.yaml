@@ -1,0 +1,27 @@
+---
+
+port: 3000
+readTimeoutSeconds: 10
+writeTimeoutSeconds: 10
+masterUrl: ""
+inCluster: true
+requests:
+  - method: GET
+    uri: /metrics
+    namespace: default
+    label: app=sample-app
+    basicAuth: false
+    returnResponpseBody: true
+    headers: []
+  - method: POST
+    uri: /register
+    label: app=another-app
+    basicAuth: true
+    username: admin
+    password: admin
+    returnResponseBody: false
+    headers:
+      - key: foo
+        value: bar
+      - key: foo2
+        value: bar2
