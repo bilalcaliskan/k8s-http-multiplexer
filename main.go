@@ -8,16 +8,15 @@ import (
 	"io/ioutil"
 	"k8s.io/client-go/kubernetes"
 	"log"
-	"net/http"
 	"os"
 	"path/filepath"
 	"time"
 )
 
 var (
-	targetPods []*TargetPod
+	// targetPods []*TargetPod
 	clientSet *kubernetes.Clientset
-	client *http.Client
+	// client *http.Client
 	kubeConfigPath *string
 	labels []string
 )
@@ -44,8 +43,8 @@ func main() {
 	log.Printf("total %d requests found in the config!\n", len(config.Requests))
 
 
-	log.Println("Initializing http client...")
-	client = &http.Client{}
+	/*log.Println("Initializing http client...")
+	client = &http.Client{}*/
 
 	log.Println("Initializing kube client...")
 	restConfig, err := getConfig(config.MasterUrl, *kubeConfigPath, config.InCluster)
