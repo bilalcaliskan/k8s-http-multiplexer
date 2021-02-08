@@ -4,7 +4,7 @@ port: 3000
 readTimeoutSeconds: 10
 writeTimeoutSeconds: 10
 masterUrl: ""
-inCluster: true
+inCluster: false
 requests:
   - method: GET
     uri: /metrics
@@ -13,6 +13,7 @@ requests:
     basicAuth: false
     returnResponpseBody: true
     headers: []
+    expectedResponseCode: 200
   - method: POST
     uri: /register
     label: app=another-app
@@ -20,8 +21,13 @@ requests:
     username: admin
     password: admin
     returnResponseBody: false
+    requestBody: |
+      {
+        "name": "bilal"
+      }
     headers:
-      - key: foo
-        value: bar
-      - key: foo2
-        value: bar2
+      - key: Content-Type
+        value: application/json
+      - key: X-Custom-Header
+        value: myvalue
+    expectedResponseCode: 200
