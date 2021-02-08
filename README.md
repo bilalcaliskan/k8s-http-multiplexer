@@ -1,0 +1,2 @@
+## K8s Http Multiplexer
+[![CI](https://github.com/bilalcaliskan/k8s-http-multiplexer/workflows/CI/badge.svg?event=push)](https://github.com/bilalcaliskan/k8s-http-multiplexer/actions?query=workflow%3ACI)
