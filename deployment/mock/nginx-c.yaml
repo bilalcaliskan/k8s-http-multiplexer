@@ -1,0 +1,23 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: nginx-c
+  namespace: default
+  labels:
+    app: nginx-c
+    foo: bar
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: nginx-c
+  template:
+    metadata:
+      labels:
+        app: nginx-c
+    spec:
+      containers:
+        - name: nginx
+          image: nginx:1.14.2
+          ports:
+            - containerPort: 80

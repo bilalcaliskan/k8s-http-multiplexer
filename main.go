@@ -67,7 +67,7 @@ func main() {
 		labels = append(labels, v.Label)
 	}
 	logger.Info("initialized labels slice", zap.Any("labels", labels))
-	runPodInformer(clientSet, labels)
+	runPodInformer(clientSet, labels, logger)
 
 	router := mux.NewRouter()
 	server := initServer(router, config, fmt.Sprintf(":%d", config.Port), time.Duration(int32(config.WriteTimeoutSeconds)),

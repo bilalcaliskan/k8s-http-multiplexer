@@ -7,12 +7,28 @@ masterUrl: ""
 inCluster: false
 requests:
   - method: GET
-    uri: /metrics
+    uri: /
     namespace: default
-    label: app=sample-app
+    label: app=nginx-a
     basicAuth: false
     returnResponpseBody: true
     headers: []
+    expectedResponseCode: 200
+  - method: GET
+    uri: /
+    namespace: default
+    label: app=nginx-b
+    basicAuth: false
+    returnResponpseBody: true
+    headers: [ ]
+    expectedResponseCode: 200
+  - method: GET
+    uri: /
+    namespace: default
+    label: app=nginx-c
+    basicAuth: false
+    returnResponpseBody: true
+    headers: [ ]
     expectedResponseCode: 200
   - method: POST
     uri: /register

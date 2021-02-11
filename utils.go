@@ -6,6 +6,7 @@ import (
 	"k8s.io/client-go/rest"
 	"k8s.io/client-go/tools/clientcmd"
 	"net/http"
+	"strings"
 	"time"
 )
 
@@ -42,6 +43,18 @@ func getClientSet(config *rest.Config) (*kubernetes.Clientset, error) {
 		return nil, err
 	}
 	return clientSet, nil
+}
+
+func labelExists(labelMap map[string]string, label string) bool {
+	splittedLabel := strings.Split(label, "=")
+	labelKey := splittedLabel[0]
+	labelValue := splittedLabel[1]
+	for key, value := range labelMap {
+		if labelKey == key && labelValue == value {
+			return true
+		}
+	}
+	return false
 }
 
 /*func findTargetPod(targetPods []*TargetPod, pod TargetPod) (int, bool) {
