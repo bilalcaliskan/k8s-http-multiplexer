@@ -1,6 +1,12 @@
 test:
 	go test .
 
+deploy:
+	docker build -t docker.io/bilalcaliskan/k8s-http-multiplexer:latest .
+	kubectl create -f deployment/configmap.yaml
+	kubectl create -f deployment/deployment.yaml
+	kubectl create -f deployment/service.yaml
+
 build:
 	go build -o bin/main *.go
 

@@ -1,9 +1,11 @@
 ---
 
 port: 3000
+metricsPort: 2112
+metricsUri: /metrics
+masterUrl: ""
 readTimeoutSeconds: 10
 writeTimeoutSeconds: 10
-masterUrl: ""
 inCluster: false
 requests:
   - method: GET
@@ -13,44 +15,45 @@ requests:
     # optional targetPort field. Defaults to .Spec.Containers[0].Ports[0].ContainerPort. No need if you have single
     # container in the pod
     targetPort: 80
+    # targetPort: 30184
     basicAuth: false
-    returnResponpseBody: true
+    returnResponseBody: true
     headers: []
     expectedResponseCode: 200
-#  - method: GET
-#    uri: /
-#    namespace: default
-#    label: app=nginx-b
-#    # optional targetPort field. Defaults to .Spec.Containers[0].Ports[0].ContainerPort
-#    targetPort: 80
-#    basicAuth: false
-#    returnResponpseBody: true
-#    headers: [ ]
-#    expectedResponseCode: 200
-#  - method: GET
-#    uri: /
-#    namespace: default
-#    label: app=nginx-c
-#    # optional targetPort field. Defaults to .Spec.Containers[0].Ports[0].ContainerPort
-#    targetPort: 80
-#    basicAuth: false
-#    returnResponpseBody: true
-#    headers: [ ]
-#    expectedResponseCode: 200
-#  - method: POST
-#    uri: /register
-#    label: app=another-app
-#    basicAuth: true
-#    username: admin
-#    password: admin
-#    returnResponseBody: false
-#    requestBody: |
-#      {
-#        "name": "bilal"
-#      }
-#    headers:
-#      - key: Content-Type
-#        value: application/json
-#      - key: X-Custom-Header
-#        value: myvalue
-#    expectedResponseCode: 200
+  - method: GET
+    uri: /foo
+    namespace: default
+    label: app=nginx-b
+    # optional targetPort field. Defaults to .Spec.Containers[0].Ports[0].ContainerPort
+    targetPort: 80
+    basicAuth: false
+    returnResponpseBody: true
+    headers: [ ]
+    expectedResponseCode: 200
+  - method: GET
+    uri: /foo2
+    namespace: default
+    label: app=nginx-c
+    # optional targetPort field. Defaults to .Spec.Containers[0].Ports[0].ContainerPort
+    targetPort: 80
+    basicAuth: false
+    returnResponpseBody: true
+    headers: [ ]
+    expectedResponseCode: 200
+  - method: POST
+    uri: /register
+    label: app=another-app
+    basicAuth: true
+    username: admin
+    password: admin
+    returnResponseBody: false
+    requestBody: |
+      {
+        "name": "bilal"
+      }
+    headers:
+      - key: Content-Type
+        value: application/json
+      - key: X-Custom-Header
+        value: myvalue
+    expectedResponseCode: 200

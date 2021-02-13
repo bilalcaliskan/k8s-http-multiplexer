@@ -1,0 +1,65 @@
+---
+
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: k8s-http-multiplexer-config
+  namespace: default
+data:
+  config.yaml: |
+    port: 3000
+    metricsPort: 2112
+    metricsUri: /metrics
+    masterUrl: ""
+    readTimeoutSeconds: 10
+    writeTimeoutSeconds: 10
+    inCluster: true
+    requests:
+      - method: GET
+        uri: /
+        namespace: default
+        label: app=nginx-a
+        # optional targetPort field. Defaults to .Spec.Containers[0].Ports[0].ContainerPort. No need if you have single
+        # container in the pod
+        targetPort: 80
+        basicAuth: false
+        returnResponseBody: true
+        headers: []
+        expectedResponseCode: 200
+      - method: GET
+        uri: /foo
+        namespace: default
+        label: app=nginx-b
+        # optional targetPort field. Defaults to .Spec.Containers[0].Ports[0].ContainerPort
+        targetPort: 80
+        basicAuth: false
+        returnResponseBody: true
+        headers: [ ]
+        expectedResponseCode: 200
+      - method: GET
+        uri: /foo2
+        namespace: default
+        label: app=nginx-c
+        # optional targetPort field. Defaults to .Spec.Containers[0].Ports[0].ContainerPort
+        targetPort: 80
+        basicAuth: false
+        returnResponseBody: true
+        headers: [ ]
+        expectedResponseCode: 200
+      - method: POST
+        uri: /register
+        label: app=another-app
+        basicAuth: true
+        username: admin
+        password: admin
+        returnResponseBody: false
+        requestBody: |
+          {
+            "name": "bilal"
+          }
+        headers:
+          - key: Content-Type
+            value: application/json
+          - key: X-Custom-Header
+            value: myvalue
+        expectedResponseCode: 200

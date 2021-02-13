@@ -5,7 +5,7 @@ metadata:
   namespace: default
   labels:
     app: nginx-a
-    foo: bar
+    foo: bara
 spec:
   replicas: 3
   selector:
@@ -15,6 +15,7 @@ spec:
     metadata:
       labels:
         app: nginx-a
+        foo: bara
     spec:
       containers:
         - name: nginx

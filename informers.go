@@ -35,6 +35,7 @@ func runPodInformer(clientSet *kubernetes.Clientset, config Config, logger *zap.
 					}
 
 					addr := fmt.Sprintf("http://%s:%d", pod.Status.PodIP, containerPort)
+					// addr := fmt.Sprintf("http://%s:%d", "192.168.99.114", containerPort)
 					targetPod := TargetPod{
 						addr:  addr,
 						label: request.Label,

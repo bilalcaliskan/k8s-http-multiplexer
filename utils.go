@@ -1,24 +1,11 @@
 package main
 
 import (
-	"github.com/gorilla/mux"
 	"k8s.io/client-go/kubernetes"
 	"k8s.io/client-go/rest"
 	"k8s.io/client-go/tools/clientcmd"
-	"net/http"
 	"strings"
-	"time"
 )
-
-func initServer(router *mux.Router, config Config, addr string, writeTimeout time.Duration, readTimeout time.Duration) *http.Server {
-	registerHandlers(router, config)
-	return &http.Server{
-		Handler: router,
-		Addr: addr,
-		WriteTimeout: writeTimeout,
-		ReadTimeout: readTimeout,
-	}
-}
 
 func getConfig(masterUrl, kubeConfigPath string, inCluster bool) (*rest.Config, error) {
 	var config *rest.Config
@@ -55,6 +42,16 @@ func labelExists(labelMap map[string]string, label string) bool {
 		}
 	}
 	return false
+}
+
+func getPods(targetPods []*TargetPod, label string) []TargetPod {
+	var pods []TargetPod
+	for _, v := range targetPods {
+		if v.label == label {
+			pods = append(pods, *v)
+		}
+	}
+	return pods
 }
 
 func findTargetPod(targetPods []*TargetPod, pod TargetPod) (int, bool) {
