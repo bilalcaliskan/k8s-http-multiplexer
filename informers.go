@@ -1,6 +1,7 @@
 package main
 
 import (
+	"fmt"
 	"go.uber.org/zap"
 	v1 "k8s.io/api/core/v1"
 	"k8s.io/apimachinery/pkg/util/wait"
@@ -10,7 +11,8 @@ import (
 	"time"
 )
 
-func runPodInformer(clientSet *kubernetes.Clientset, labels []string, logger *zap.Logger) {
+// TODO: Run each logic as seperate goroutine, use channels
+func runPodInformer(clientSet *kubernetes.Clientset, config Config, logger *zap.Logger) {
 	informerFactory := informers.NewSharedInformerFactory(clientSet, time.Second * 30)
 	podInformer := informerFactory.Core().V1().Pods()
 	podInformer.Informer().AddEventHandler(cache.ResourceEventHandlerFuncs{
@@ -20,54 +22,72 @@ func runPodInformer(clientSet *kubernetes.Clientset, labels []string, logger *za
 
 			pod := obj.(*v1.Pod)
 			labelMap := pod.GetLabels()
-			for _, label := range labels {
-				if labelExists(labelMap, label) {
+			for _, request := range config.Requests {
+				if labelExists(labelMap, request.Label) && pod.Status.PodIP != "" {
 					// 1- Add pod ip to the targetPods slice
 
-					logger.Info("label found in the labelMap", zap.String("label", label),
+					logger.Info("label found in the labelMap", zap.String("label", request.Label),
 						zap.Any("labelMap", labelMap))
-				} else {
+
+					containerPort := pod.Spec.Containers[0].Ports[0].ContainerPort
+					if request.TargetPort != 0 {
+						containerPort = request.TargetPort
+					}
+
+					addr := fmt.Sprintf("http://%s:%d", pod.Status.PodIP, containerPort)
+					targetPod := TargetPod{
+						addr:  addr,
+						label: request.Label,
+					}
+
+					logger.Info("adding pod to the targetPods", zap.String("targetPod.addr", targetPod.addr),
+						zap.String("targetPod.label", targetPod.label))
+					addTargetPod(&targetPods, &targetPod)
+
+					logger.Info("", zap.Any("targetPod", targetPod))
+				} else if labelExists(labelMap, request.Label) && pod.Status.PodIP == "" {
 					// 1- Do nothing
 
-					// logger.Info("label not found in the labelMap, skipping", zap.String("label", label),
-					//	zap.Any("labelMap", labelMap))
+					logger.Info("label found in the labelMap, but pod still does not have an ip address, skipping",
+						zap.String("label", request.Label), zap.Any("labelMap", labelMap))
 				}
 			}
 		},
 		UpdateFunc: func(oldObj, newObj interface{}) {
-			// 1- Old pod labelled, new pod labelled
-			// 2- Old pod not labelled, new pod labelled
-			// 3- Old pod labelled, new pod not labelled
-			// 4- Old pod not labelled, new pod not labelled
+			// 1- Old pod labelled and new pod labelled, append to targetPods if ip is not null on newPod
 
 			oldPod := oldObj.(*v1.Pod)
 			oldLabelMap := oldPod.GetLabels()
 			newPod := newObj.(*v1.Pod)
 			newLabelMap := newPod.GetLabels()
 
-			if oldPod.ResourceVersion != newPod.ResourceVersion {
-				for _, label := range labels {
-					if labelExists(oldLabelMap, label) && labelExists(newLabelMap, label) {
-						// 1- Check ip addresses of oldPod and newPod, update targetPods slice if neccessary
+			if oldPod.ResourceVersion == newPod.ResourceVersion {
+				return
+			}
 
-						logger.Info("old pod is labelled and new pod labelled", zap.String("oldPodIp", oldPod.Status.PodIP),
-							zap.String("newPodIp", newPod.Status.PodIP))
-					} else if !labelExists(oldLabelMap, label) && labelExists(newLabelMap, label) {
-						// 1- Add newPod ip to targetPods slice
+			for _, request := range config.Requests {
+				if labelExists(oldLabelMap, request.Label) && labelExists(newLabelMap, request.Label) {
+					// 1- Check ip addresses of oldPod and newPod, update targetPods slice if neccessary
 
-						logger.Info("old pod is not labelled and new pod labelled", zap.String("oldPodIp",
-							oldPod.Status.PodIP), zap.String("newPodIp", newPod.Status.PodIP))
-					} else if labelExists(oldLabelMap, label) && !labelExists(newLabelMap, label) {
-						// 1- Remove oldPod ip from targetPods slice, do nothing for newPod
+					if oldPod.Status.PodIP == "" && newPod.Status.PodIP != "" {
+						logger.Info("assigned an ip address to the pod", zap.String("addr", newPod.Status.PodIP))
 
-						logger.Info("old pod is labelled and new pod is not labelled", zap.String("oldPodIp",
-							oldPod.Status.PodIP), zap.String("newPodIp", newPod.Status.PodIP))
-					} else if !labelExists(oldLabelMap, label) && !labelExists(newLabelMap, label) {
-						// 1- Do nothing
+						containerPort := newPod.Spec.Containers[0].Ports[0].ContainerPort
+						if request.TargetPort != 0 {
+							containerPort = request.TargetPort
+						}
 
-						// logger.Info("old pod is not labelled and new pod is not labelled, there is nothing to do",
-						// 	zap.String("oldPodIp", oldPod.Status.PodIP), zap.String("newPodIp", newPod.Status.PodIP))
+						addr := fmt.Sprintf("http://%s:%d", newPod.Status.PodIP, containerPort)
+						targetPod := TargetPod{
+							addr:  addr,
+							label: request.Label,
+						}
+
+						logger.Info("adding pod to the targetPods", zap.String("targetPod.addr", targetPod.addr),
+							zap.String("targetPod.label", targetPod.label))
+						addTargetPod(&targetPods, &targetPod)
 					}
+
 				}
 			}
 		},
@@ -77,12 +97,28 @@ func runPodInformer(clientSet *kubernetes.Clientset, labels []string, logger *za
 
 			pod := obj.(*v1.Pod)
 			labelMap := pod.GetLabels()
-			for _, label := range labels {
-				if labelExists(labelMap, label) {
+			for _, request := range config.Requests {
+				if labelExists(labelMap, request.Label) {
 					// 1- Remove pod ip from targetPods slice
 
-				} else if !labelExists(labelMap, label) {
-					// 1- Do nothing
+					containerPort := pod.Spec.Containers[0].Ports[0].ContainerPort
+					if request.TargetPort != 0 {
+						containerPort = request.TargetPort
+					}
+
+					addr := fmt.Sprintf("http://%s:%d", pod.Status.PodIP, containerPort)
+					targetPod := TargetPod{
+						addr:  addr,
+						label: request.Label,
+					}
+					index, found := findTargetPod(targetPods, targetPod)
+					if found {
+						logger.Info("pod found in the targetPods, removing", zap.String("addr", targetPod.addr),
+							zap.String("label", targetPod.label))
+						removeTargetPod(&targetPods, index)
+						logger.Info("pod successfully removed from targetPods", zap.Any("targetPodsLength",
+							len(targetPods)))
+					}
 
 				}
 			}

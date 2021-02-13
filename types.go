@@ -1,6 +1,6 @@
 package main
 
-/*type TargetPod struct {
+type TargetPod struct {
 	addr string
 	label string
 }
@@ -9,7 +9,7 @@ func (targetPod *TargetPod) Equals(other *TargetPod) bool {
 	isAddrEquals := targetPod.addr == other.addr
 	isLabelEquals := targetPod.label == other.label
 	return isAddrEquals && isLabelEquals
-}*/
+}
 
 type Header struct {
 	Key string `yaml:"key,omitempty"`
@@ -21,6 +21,7 @@ type Request struct {
 	URI string `yaml:"uri"`
 	Namespace string `yaml:"namespace"`
 	Label string `yaml:"label"`
+	TargetPort int32 `yaml:"targetPort"`
 	BasicAuth bool `yaml:"basicAuth"`
 	Headers []Header `yaml:"headers"`
 	Username string `yaml:"username,omitempty"`

@@ -14,11 +14,10 @@ import (
 )
 
 var (
-	// targetPods []*TargetPod
+	targetPods []*TargetPod
 	clientSet *kubernetes.Clientset
 	// client *http.Client
 	kubeConfigPath *string
-	labels []string
 	logger *zap.Logger
 	err error
 )
@@ -63,11 +62,11 @@ func main() {
 	}
 	logger.Info("successfully initialized kube client")
 
-	for _, v := range config.Requests {
+	/*for _, v := range config.Requests {
 		labels = append(labels, v.Label)
 	}
-	logger.Info("initialized labels slice", zap.Any("labels", labels))
-	runPodInformer(clientSet, labels, logger)
+	logger.Info("initialized labels slice", zap.Any("labels", labels))*/
+	runPodInformer(clientSet, config, logger)
 
 	router := mux.NewRouter()
 	server := initServer(router, config, fmt.Sprintf(":%d", config.Port), time.Duration(int32(config.WriteTimeoutSeconds)),

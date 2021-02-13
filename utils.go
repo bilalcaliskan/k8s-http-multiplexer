@@ -57,7 +57,7 @@ func labelExists(labelMap map[string]string, label string) bool {
 	return false
 }
 
-/*func findTargetPod(targetPods []*TargetPod, pod TargetPod) (int, bool) {
+func findTargetPod(targetPods []*TargetPod, pod TargetPod) (int, bool) {
 	for i, item := range targetPods {
 		if pod.Equals(item) {
 			return i, true
@@ -71,4 +71,8 @@ func addTargetPod(targetPods *[]*TargetPod, pod *TargetPod) {
 	if !found {
 		*targetPods = append(*targetPods, pod)
 	}
-}*/
+}
+
+func removeTargetPod(targetPods *[]*TargetPod, index int) {
+	*targetPods = append((*targetPods)[:index], (*targetPods)[index+1:]...)
+}

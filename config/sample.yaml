@@ -10,40 +10,47 @@ requests:
     uri: /
     namespace: default
     label: app=nginx-a
+    # optional targetPort field. Defaults to .Spec.Containers[0].Ports[0].ContainerPort. No need if you have single
+    # container in the pod
+    targetPort: 80
     basicAuth: false
     returnResponpseBody: true
     headers: []
     expectedResponseCode: 200
-  - method: GET
-    uri: /
-    namespace: default
-    label: app=nginx-b
-    basicAuth: false
-    returnResponpseBody: true
-    headers: [ ]
-    expectedResponseCode: 200
-  - method: GET
-    uri: /
-    namespace: default
-    label: app=nginx-c
-    basicAuth: false
-    returnResponpseBody: true
-    headers: [ ]
-    expectedResponseCode: 200
-  - method: POST
-    uri: /register
-    label: app=another-app
-    basicAuth: true
-    username: admin
-    password: admin
-    returnResponseBody: false
-    requestBody: |
-      {
-        "name": "bilal"
-      }
-    headers:
-      - key: Content-Type
-        value: application/json
-      - key: X-Custom-Header
-        value: myvalue
-    expectedResponseCode: 200
+#  - method: GET
+#    uri: /
+#    namespace: default
+#    label: app=nginx-b
+#    # optional targetPort field. Defaults to .Spec.Containers[0].Ports[0].ContainerPort
+#    targetPort: 80
+#    basicAuth: false
+#    returnResponpseBody: true
+#    headers: [ ]
+#    expectedResponseCode: 200
+#  - method: GET
+#    uri: /
+#    namespace: default
+#    label: app=nginx-c
+#    # optional targetPort field. Defaults to .Spec.Containers[0].Ports[0].ContainerPort
+#    targetPort: 80
+#    basicAuth: false
+#    returnResponpseBody: true
+#    headers: [ ]
+#    expectedResponseCode: 200
+#  - method: POST
+#    uri: /register
+#    label: app=another-app
+#    basicAuth: true
+#    username: admin
+#    password: admin
+#    returnResponseBody: false
+#    requestBody: |
+#      {
+#        "name": "bilal"
+#      }
+#    headers:
+#      - key: Content-Type
+#        value: application/json
+#      - key: X-Custom-Header
+#        value: myvalue
+#    expectedResponseCode: 200
