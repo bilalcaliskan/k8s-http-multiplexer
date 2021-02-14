@@ -10,7 +10,6 @@ inCluster: false
 requests:
   - method: GET
     uri: /
-    namespace: default
     label: app=nginx-a
     # optional targetPort field. Defaults to .Spec.Containers[0].Ports[0].ContainerPort. No need if you have single
     # container in the pod
@@ -22,7 +21,6 @@ requests:
     expectedResponseCode: 200
   - method: GET
     uri: /foo
-    namespace: default
     label: app=nginx-b
     # optional targetPort field. Defaults to .Spec.Containers[0].Ports[0].ContainerPort
     targetPort: 80
@@ -32,7 +30,6 @@ requests:
     expectedResponseCode: 200
   - method: GET
     uri: /foo2
-    namespace: default
     label: app=nginx-c
     # optional targetPort field. Defaults to .Spec.Containers[0].Ports[0].ContainerPort
     targetPort: 80

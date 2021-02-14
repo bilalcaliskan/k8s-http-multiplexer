@@ -19,7 +19,6 @@ type Header struct {
 type Request struct {
 	Method string `yaml:"method"`
 	URI string `yaml:"uri"`
-	Namespace string `yaml:"namespace"`
 	Label string `yaml:"label"`
 	TargetPort int32 `yaml:"targetPort"`
 	BasicAuth bool `yaml:"basicAuth"`
