@@ -13,6 +13,7 @@ requests:
     label: app=nginx-a
     # optional targetPort field. Defaults to .Spec.Containers[0].Ports[0].ContainerPort. No need if you have single
     # container in the pod
+    # TODO: Uncomment for out of cluster
     targetPort: 80
     # targetPort: 30184
     basicAuth: false
@@ -37,20 +38,20 @@ requests:
     returnResponpseBody: true
     headers: [ ]
     expectedResponseCode: 200
-  - method: POST
-    uri: /register
-    label: app=another-app
-    basicAuth: true
-    username: admin
-    password: admin
-    returnResponseBody: false
-    requestBody: |
-      {
-        "name": "bilal"
-      }
-    headers:
-      - key: Content-Type
-        value: application/json
-      - key: X-Custom-Header
-        value: myvalue
-    expectedResponseCode: 200
+#  - method: POST
+#    uri: /register
+#    label: app=another-app
+#    basicAuth: true
+#    username: admin
+#    password: admin
+#    returnResponseBody: false
+#    requestBody: |
+#      {
+#        "name": "bilal"
+#      }
+#    headers:
+#      - key: Content-Type
+#        value: application/json
+#      - key: X-Custom-Header
+#        value: myvalue
+#    expectedResponseCode: 200

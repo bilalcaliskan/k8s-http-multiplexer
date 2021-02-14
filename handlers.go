@@ -13,74 +13,81 @@ func getHandler(w http.ResponseWriter, r *http.Request) {
 	var successCount int
 	var responseBody string
 
-	found, req := config.getRequest(r.Method, r.RequestURI)
+	found, configRequest := config.getRequest(r.Method, r.RequestURI)
 	if !found {
 		return
 	}
 
-	logger.Info("request received", zap.String("method", req.Method), zap.String("uri", req.URI),
-		zap.String("label", req.Label))
-
-	pods := getPods(targetPods, req.Label)
+	pods := getPods(targetPods, configRequest.Label)
 	for _, pod := range pods {
-		url := fmt.Sprintf("%s%s", pod.addr, req.URI)
-		logger.Info("making request on each pod", zap.String("url", url))
-		request, err := http.NewRequest("GET", fmt.Sprintf("%s%s", pod.addr, req.URI), nil)
+		url := fmt.Sprintf("%s%s", pod.addr, configRequest.URI)
+		logger.Info("making request on each pod", zap.String("url", url), zap.String("label", pod.label))
+		remoteRequest, err := http.NewRequest("GET", fmt.Sprintf("%s%s", pod.addr, configRequest.URI), nil)
 		if err != nil {
-			panic(err)
+			logger.Error("an error occured while creating the request", zap.Error(err))
+			return
 		}
 
-		logger.Info("setting headers on the remote request", zap.Any("headers", req.Headers))
-		for _, header := range req.Headers {
-			request.Header.Set(header.Key, header.Value)
+		for _, header := range configRequest.Headers {
+			logger.Info("setting header on the remote request", zap.Any("header", header))
+			remoteRequest.Header.Set(header.Key, header.Value)
 		}
 
-		res, err := client.Do(request)
+		if configRequest.BasicAuth {
+			logger.Info("setting basic auth on remote request", zap.String("username", configRequest.Username),
+				zap.String("password", configRequest.Password))
+			remoteRequest.SetBasicAuth(configRequest.Username, configRequest.Password)
+		}
+
+		res, err := client.Do(remoteRequest)
 		if err != nil {
 			logger.Error("an error occured while making the request", zap.Error(err))
+			return
 		}
 
-		if res != nil && res.StatusCode == req.ExpectedResponseCode {
+		if res != nil && res.StatusCode == configRequest.ExpectedResponseCode {
 			successCount++
 		}
 
-		bodyBytes, err := ioutil.ReadAll(res.Body)
-		if err != nil {
-			logger.Fatal("an error occured while reading response body", zap.Error(err))
+		var bodyBytes []byte
+		if bodyBytes, err = ioutil.ReadAll(res.Body); err != nil {
+			logger.Error("an error occured while reading response body", zap.Error(err))
+			return
 		}
-		err = res.Body.Close()
-		if err != nil {
-			logger.Fatal("an error occured while closing response body", zap.Error(err))
+
+		if err = res.Body.Close(); err != nil {
+			logger.Error("an error occured while closing response body", zap.Error(err))
+			return
 		}
 
 		bodyString := string(bodyBytes)
 		responseBody += bodyString
 	}
 
-	logger.Info("", zap.Bool("returnResponseBody", req.ReturnResponseBody))
-	if !req.ReturnResponseBody {
+	w.WriteHeader(http.StatusOK)
+	w.Header().Set("Content-Type", "application/json")
+
+	if !configRequest.ReturnResponseBody {
 		response := Response{
 			TargetCount:  len(pods),
 			SuccessCount: successCount,
 		}
-		responseBytes, err := json.Marshal(response)
-		if err != nil {
-			logger.Fatal("an error occured while marshaling response", zap.Error(err))
+
+		var responseBytes []byte
+		if responseBytes, err = json.Marshal(response); err != nil {
+			logger.Error("an error occured while marshaling response", zap.Error(err))
 			http.Error(w, err.Error(), http.StatusInternalServerError)
 			return
 		}
-		w.WriteHeader(http.StatusOK)
-		w.Header().Set("Content-Type", "application/json")
-		_, err = w.Write(responseBytes)
-		if err != nil {
-			logger.Fatal("an error occured while writing response", zap.Error(err))
+
+		if _, err = w.Write(responseBytes); err != nil {
+			logger.Error("an error occured while writing response", zap.Error(err))
 			http.Error(w, err.Error(), http.StatusInternalServerError)
 			return
 		}
 	} else {
-		_, err = w.Write([]byte(responseBody))
-		if err != nil {
-			logger.Fatal("an error occured while writing response", zap.Error(err))
+		if _, err = w.Write([]byte(responseBody)); err != nil {
+			logger.Error("an error occured while writing response", zap.Error(err))
 			http.Error(w, err.Error(), http.StatusInternalServerError)
 			return
 		}
@@ -88,17 +95,7 @@ func getHandler(w http.ResponseWriter, r *http.Request) {
 }
 
 func postHandler(w http.ResponseWriter, r *http.Request) {
-	found, req := config.getRequest(r.Method, r.RequestURI)
-	if found {
-		logger.Info("request received", zap.String("method", req.Method), zap.String("uri", req.URI),
-			zap.String("label", req.Label))
-	}
-
-	w.WriteHeader(http.StatusOK)
-	_, err := fmt.Fprintf(w, "hello from postHandler\n")
-	if err != nil {
-		panic(err)
-	}
+	// TODO: Implement
 }
 
 func registerHandlers(router *mux.Router, config Config) {

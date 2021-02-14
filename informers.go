@@ -17,15 +17,10 @@ func runPodInformer(clientSet *kubernetes.Clientset, config Config, logger *zap.
 	podInformer := informerFactory.Core().V1().Pods()
 	podInformer.Informer().AddEventHandler(cache.ResourceEventHandlerFuncs{
 		AddFunc: func(obj interface{}) {
-			// 1- Pod labelled
-			// 2- Pod is not labelled
-
 			pod := obj.(*v1.Pod)
 			labelMap := pod.GetLabels()
 			for _, request := range config.Requests {
 				if labelExists(labelMap, request.Label) && pod.Status.PodIP != "" {
-					// 1- Add pod ip to the targetPods slice
-
 					logger.Info("label found in the labelMap", zap.String("label", request.Label),
 						zap.Any("labelMap", labelMap))
 
@@ -34,8 +29,10 @@ func runPodInformer(clientSet *kubernetes.Clientset, config Config, logger *zap.
 						containerPort = request.TargetPort
 					}
 
+					// TODO: Uncomment for out of cluster
 					addr := fmt.Sprintf("http://%s:%d", pod.Status.PodIP, containerPort)
 					// addr := fmt.Sprintf("http://%s:%d", "192.168.99.114", containerPort)
+
 					targetPod := TargetPod{
 						addr:  addr,
 						label: request.Label,
@@ -44,19 +41,13 @@ func runPodInformer(clientSet *kubernetes.Clientset, config Config, logger *zap.
 					logger.Info("adding pod to the targetPods", zap.String("targetPod.addr", targetPod.addr),
 						zap.String("targetPod.label", targetPod.label))
 					addTargetPod(&targetPods, &targetPod)
-
-					logger.Info("", zap.Any("targetPod", targetPod))
 				} else if labelExists(labelMap, request.Label) && pod.Status.PodIP == "" {
-					// 1- Do nothing
-
 					logger.Info("label found in the labelMap, but pod still does not have an ip address, skipping",
 						zap.String("label", request.Label), zap.Any("labelMap", labelMap))
 				}
 			}
 		},
 		UpdateFunc: func(oldObj, newObj interface{}) {
-			// 1- Old pod labelled and new pod labelled, append to targetPods if ip is not null on newPod
-
 			oldPod := oldObj.(*v1.Pod)
 			oldLabelMap := oldPod.GetLabels()
 			newPod := newObj.(*v1.Pod)
@@ -68,8 +59,6 @@ func runPodInformer(clientSet *kubernetes.Clientset, config Config, logger *zap.
 
 			for _, request := range config.Requests {
 				if labelExists(oldLabelMap, request.Label) && labelExists(newLabelMap, request.Label) {
-					// 1- Check ip addresses of oldPod and newPod, update targetPods slice if neccessary
-
 					if oldPod.Status.PodIP == "" && newPod.Status.PodIP != "" {
 						logger.Info("assigned an ip address to the pod", zap.String("addr", newPod.Status.PodIP))
 
@@ -93,15 +82,10 @@ func runPodInformer(clientSet *kubernetes.Clientset, config Config, logger *zap.
 			}
 		},
 		DeleteFunc: func(obj interface{}) {
-			// 1- Pod is labelled
-			// 2- Pod is not labelled
-
 			pod := obj.(*v1.Pod)
 			labelMap := pod.GetLabels()
 			for _, request := range config.Requests {
 				if labelExists(labelMap, request.Label) {
-					// 1- Remove pod ip from targetPods slice
-
 					containerPort := pod.Spec.Containers[0].Ports[0].ContainerPort
 					if request.TargetPort != 0 {
 						containerPort = request.TargetPort
@@ -112,8 +96,8 @@ func runPodInformer(clientSet *kubernetes.Clientset, config Config, logger *zap.
 						addr:  addr,
 						label: request.Label,
 					}
-					index, found := findTargetPod(targetPods, targetPod)
-					if found {
+
+					if index, found := findTargetPod(targetPods, targetPod); found {
 						logger.Info("pod found in the targetPods, removing", zap.String("addr", targetPod.addr),
 							zap.String("label", targetPod.label))
 						removeTargetPod(&targetPods, index)

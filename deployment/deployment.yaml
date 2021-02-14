@@ -28,6 +28,7 @@ spec:
             - name: config
               mountPath: "/opt/config"
               readOnly: true
+      serviceAccountName: multiplexer
       volumes:
         - name: config
           configMap:
