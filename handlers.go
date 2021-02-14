@@ -44,13 +44,15 @@ func getHandler(w http.ResponseWriter, r *http.Request) {
 			successCount++
 		}
 
-		defer func() {
-			err = res.Body.Close()
-		}()
 		bodyBytes, err := ioutil.ReadAll(res.Body)
 		if err != nil {
 			logger.Fatal("an error occured while reading response body", zap.Error(err))
 		}
+		err = res.Body.Close()
+		if err != nil {
+			logger.Fatal("an error occured while closing response body", zap.Error(err))
+		}
+
 		bodyString := string(bodyBytes)
 		responseBody += bodyString
 	}
