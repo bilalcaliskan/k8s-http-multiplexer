@@ -1,4 +1,4 @@
-package main
+package web
 
 import (
 	"encoding/json"
@@ -6,6 +6,8 @@ import (
 	"github.com/gorilla/mux"
 	"go.uber.org/zap"
 	"io/ioutil"
+	"k8s-http-multiplexer/pkg/cfg"
+	"k8s-http-multiplexer/pkg/k8s"
 	"net/http"
 )
 
@@ -13,16 +15,16 @@ func getHandler(w http.ResponseWriter, r *http.Request) {
 	var successCount int
 	var responseBody string
 
-	found, configRequest := config.getRequest(r.Method, r.RequestURI)
+	found, configRequest := cfg.Cfg.GetRequest(r.Method, r.RequestURI)
 	if !found {
 		return
 	}
 
-	pods := getPods(targetPods, configRequest.Label)
+	pods := k8s.GetPods(k8s.TargetPods, configRequest.Label)
 	for _, pod := range pods {
-		url := fmt.Sprintf("%s%s", pod.addr, configRequest.URI)
-		logger.Info("making request on each pod", zap.String("url", url), zap.String("label", pod.label))
-		remoteRequest, err := http.NewRequest("GET", fmt.Sprintf("%s%s", pod.addr, configRequest.URI), nil)
+		url := fmt.Sprintf("%s%s", pod.Addr, configRequest.URI)
+		logger.Info("making request on each pod", zap.String("url", url), zap.String("label", pod.Label))
+		remoteRequest, err := http.NewRequest("GET", fmt.Sprintf("%s%s", pod.Addr, configRequest.URI), nil)
 		if err != nil {
 			logger.Error("an error occured while creating the request", zap.Error(err))
 			return
@@ -68,7 +70,7 @@ func getHandler(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 
 	if !configRequest.ReturnResponseBody {
-		response := Response{
+		response := cfg.Response{
 			TargetCount:  len(pods),
 			SuccessCount: successCount,
 		}
@@ -98,9 +100,9 @@ func postHandler(w http.ResponseWriter, r *http.Request) {
 	// TODO: Implement
 }
 
-func registerHandlers(router *mux.Router, config Config) {
+func registerHandlers(router *mux.Router) {
 	var count int
-	for _, v := range config.Requests {
+	for _, v := range cfg.Cfg.Requests {
 		if v.Method == "GET" {
 			router.HandleFunc(v.URI, getHandler).Methods("GET").Schemes("http").Name("get")
 			count++

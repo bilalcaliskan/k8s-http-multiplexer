@@ -1,4 +1,4 @@
-package main
+package k8s
 
 import (
 	"k8s.io/client-go/kubernetes"
@@ -7,7 +7,7 @@ import (
 	"strings"
 )
 
-func getConfig(masterUrl, kubeConfigPath string, inCluster bool) (*rest.Config, error) {
+func GetConfig(masterUrl, kubeConfigPath string, inCluster bool) (*rest.Config, error) {
 	var config *rest.Config
 	var err error
 
@@ -24,7 +24,7 @@ func getConfig(masterUrl, kubeConfigPath string, inCluster bool) (*rest.Config, 
 	return config, nil
 }
 
-func getClientSet(config *rest.Config) (*kubernetes.Clientset, error) {
+func GetClientSet(config *rest.Config) (*kubernetes.Clientset, error) {
 	clientSet, err := kubernetes.NewForConfig(config)
 	if err != nil {
 		return nil, err
@@ -44,10 +44,10 @@ func labelExists(labelMap map[string]string, label string) bool {
 	return false
 }
 
-func getPods(targetPods []*TargetPod, label string) []TargetPod {
+func GetPods(targetPods []*TargetPod, label string) []TargetPod {
 	var pods []TargetPod
 	for _, v := range targetPods {
-		if v.label == label {
+		if v.Label == label {
 			pods = append(pods, *v)
 		}
 	}
