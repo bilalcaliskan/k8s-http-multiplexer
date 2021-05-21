@@ -1,5 +1,5 @@
 lint:
-	golangci-lint run
+	golangci-lint run --timeout 2m0s
 
 fmt:
 	go fmt ./...
@@ -8,7 +8,8 @@ vet:
 	go vet ./...
 
 ineffassign:
-	go get -u github.com/gordonklaus/ineffassign
+	go get github.com/gordonklaus/ineffassign
+	go mod vendor
 	ineffassign ./...
 
 test:
