@@ -14,10 +14,11 @@ import (
 // https://prometheus.io/docs/guides/go-application/
 // https://www.robustperception.io/prometheus-middleware-for-gorilla-mux
 
+// RunMetricsServer exports metrics
 func RunMetricsServer(router *mux.Router, logger *zap.Logger) {
 	metricServer := &http.Server{
-		Handler: router,
-		Addr: fmt.Sprintf(":%d", config2.Cfg.MetricsPort),
+		Handler:      router,
+		Addr:         fmt.Sprintf(":%d", config2.Cfg.MetricsPort),
 		WriteTimeout: time.Duration(int32(config2.Cfg.WriteTimeoutSeconds)) * time.Second,
 		ReadTimeout:  time.Duration(int32(config2.Cfg.ReadTimeoutSeconds)) * time.Second,
 	}

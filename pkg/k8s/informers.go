@@ -12,11 +12,13 @@ import (
 	"time"
 )
 
+// TargetPods keeps the pointer of TargetPod items. It is the representation of target ip addresses, ports information
 var TargetPods []*TargetPod
 
-// TODO: Run each logic as seperate goroutine, use channels
+// RunPodInformer runs the shared informer to watch Add/Update/Delete pod events
 func RunPodInformer(clientSet *kubernetes.Clientset, logger *zap.Logger) {
-	informerFactory := informers.NewSharedInformerFactory(clientSet, time.Second * 30)
+	// TODO: Run each logic as separate goroutine, use channels
+	informerFactory := informers.NewSharedInformerFactory(clientSet, time.Second*30)
 	podInformer := informerFactory.Core().V1().Pods()
 	podInformer.Informer().AddEventHandler(cache.ResourceEventHandlerFuncs{
 		AddFunc: func(obj interface{}) {

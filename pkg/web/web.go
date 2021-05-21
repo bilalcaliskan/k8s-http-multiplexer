@@ -12,7 +12,7 @@ import (
 var (
 	client *http.Client
 	logger *zap.Logger
-	err error
+	err    error
 )
 
 func init() {
@@ -23,11 +23,12 @@ func init() {
 	client = &http.Client{}
 }
 
+// RunWebServer spins up webserver to handle incoming HTTP requests
 func RunWebServer(router *mux.Router) {
 	registerHandlers(router)
 	webServer := &http.Server{
-		Handler: router,
-		Addr: fmt.Sprintf(":%d", cfg.Cfg.Port),
+		Handler:      router,
+		Addr:         fmt.Sprintf(":%d", cfg.Cfg.Port),
 		WriteTimeout: time.Duration(int32(cfg.Cfg.WriteTimeoutSeconds)) * time.Second,
 		ReadTimeout:  time.Duration(int32(cfg.Cfg.ReadTimeoutSeconds)) * time.Second,
 	}

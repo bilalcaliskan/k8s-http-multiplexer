@@ -14,11 +14,11 @@ import (
 )
 
 var (
-	clientSet *kubernetes.Clientset
+	clientSet                      *kubernetes.Clientset
 	kubeConfigPath, configFilePath string
-	logger *zap.Logger
-	err error
-	router *mux.Router
+	logger                         *zap.Logger
+	err                            error
+	router                         *mux.Router
 )
 
 func init() {

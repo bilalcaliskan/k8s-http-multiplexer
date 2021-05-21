@@ -8,9 +8,10 @@ import (
 )
 
 var (
-	Cfg Config
+	// Cfg is the representation of parsed Config
+	Cfg    Config
 	logger *zap.Logger
-	err error
+	err    error
 )
 
 func init() {
@@ -20,6 +21,7 @@ func init() {
 	}
 }
 
+// ParseConfig gets the file path of config file in yaml format and parses it to Config
 func ParseConfig(configFilePath string) {
 	filename, _ := filepath.Abs(configFilePath)
 	yamlFile, err := ioutil.ReadFile(filename)

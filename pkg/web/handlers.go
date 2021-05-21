@@ -26,7 +26,7 @@ func getHandler(w http.ResponseWriter, r *http.Request) {
 		logger.Info("making request on each pod", zap.String("url", url), zap.String("label", pod.Label))
 		remoteRequest, err := http.NewRequest("GET", fmt.Sprintf("%s%s", pod.Addr, configRequest.URI), nil)
 		if err != nil {
-			logger.Error("an error occured while creating the request", zap.Error(err))
+			logger.Error("an error occurred while creating the request", zap.Error(err))
 			return
 		}
 
@@ -43,7 +43,7 @@ func getHandler(w http.ResponseWriter, r *http.Request) {
 
 		res, err := client.Do(remoteRequest)
 		if err != nil {
-			logger.Error("an error occured while making the request", zap.Error(err))
+			logger.Error("an error occurred while making the request", zap.Error(err))
 			return
 		}
 
@@ -53,12 +53,12 @@ func getHandler(w http.ResponseWriter, r *http.Request) {
 
 		var bodyBytes []byte
 		if bodyBytes, err = ioutil.ReadAll(res.Body); err != nil {
-			logger.Error("an error occured while reading response body", zap.Error(err))
+			logger.Error("an error occurred while reading response body", zap.Error(err))
 			return
 		}
 
 		if err = res.Body.Close(); err != nil {
-			logger.Error("an error occured while closing response body", zap.Error(err))
+			logger.Error("an error occurred while closing response body", zap.Error(err))
 			return
 		}
 
@@ -77,19 +77,19 @@ func getHandler(w http.ResponseWriter, r *http.Request) {
 
 		var responseBytes []byte
 		if responseBytes, err = json.Marshal(response); err != nil {
-			logger.Error("an error occured while marshaling response", zap.Error(err))
+			logger.Error("an error occurred while marshaling response", zap.Error(err))
 			http.Error(w, err.Error(), http.StatusInternalServerError)
 			return
 		}
 
 		if _, err = w.Write(responseBytes); err != nil {
-			logger.Error("an error occured while writing response", zap.Error(err))
+			logger.Error("an error occurred while writing response", zap.Error(err))
 			http.Error(w, err.Error(), http.StatusInternalServerError)
 			return
 		}
 	} else {
 		if _, err = w.Write([]byte(responseBody)); err != nil {
-			logger.Error("an error occured while writing response", zap.Error(err))
+			logger.Error("an error occurred while writing response", zap.Error(err))
 			http.Error(w, err.Error(), http.StatusInternalServerError)
 			return
 		}

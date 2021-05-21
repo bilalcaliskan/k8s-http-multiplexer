@@ -7,6 +7,7 @@ import (
 	"strings"
 )
 
+// GetConfig gets required parameters and returns the rest.Config
 func GetConfig(masterUrl, kubeConfigPath string, inCluster bool) (*rest.Config, error) {
 	var config *rest.Config
 	var err error
@@ -24,6 +25,7 @@ func GetConfig(masterUrl, kubeConfigPath string, inCluster bool) (*rest.Config, 
 	return config, nil
 }
 
+// GetClientSet gets the rest.Config and returns the kubernetes.Clientset
 func GetClientSet(config *rest.Config) (*kubernetes.Clientset, error) {
 	clientSet, err := kubernetes.NewForConfig(config)
 	if err != nil {
@@ -44,6 +46,7 @@ func labelExists(labelMap map[string]string, label string) bool {
 	return false
 }
 
+// GetPods takes targetPods pointer slice and label as argument and returns a new slice with correct TargetPod instances
 func GetPods(targetPods []*TargetPod, label string) []TargetPod {
 	var pods []TargetPod
 	for _, v := range targetPods {
