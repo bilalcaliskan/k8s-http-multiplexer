@@ -41,5 +41,9 @@ cross-compile:
 	# Windows
 	GOOS=windows GOARCH=amd64 go build -o bin/main-windows-amd64 cmd/k8s-http-multiplexer/main.go
 
+upgrade-deps:
+	go mod vendor
+	go get -u ./...
+	go mod tidy
 
 all: test build run
