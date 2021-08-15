@@ -2,8 +2,10 @@ package main
 
 import (
 	"flag"
+	"github.com/dimiro1/banner"
 	"github.com/gorilla/mux"
 	"go.uber.org/zap"
+	"io/ioutil"
 	"k8s-http-multiplexer/pkg/cfg"
 	"k8s-http-multiplexer/pkg/k8s"
 	"k8s-http-multiplexer/pkg/metrics"
@@ -11,6 +13,7 @@ import (
 	"k8s.io/client-go/kubernetes"
 	"os"
 	"path/filepath"
+	"strings"
 )
 
 var (
@@ -33,6 +36,9 @@ func init() {
 	}
 
 	router = mux.NewRouter()
+
+	bannerBytes, _ := ioutil.ReadFile("banner.txt")
+	banner.Init(os.Stdout, true, false, strings.NewReader(string(bannerBytes)))
 }
 
 func main() {
