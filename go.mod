@@ -7,6 +7,7 @@ require (
 	github.com/go-openapi/spec v0.19.3 // indirect
 	github.com/gorilla/mux v1.8.0
 	github.com/prometheus/client_golang v1.11.0
+	github.com/spf13/pflag v1.0.5
 	go.uber.org/atomic v1.9.0 // indirect
 	go.uber.org/multierr v1.7.0 // indirect
 	go.uber.org/zap v1.19.0

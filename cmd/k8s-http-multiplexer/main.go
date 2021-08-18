@@ -1,51 +1,41 @@
 package main
 
 import (
-	"flag"
 	"github.com/dimiro1/banner"
 	"github.com/gorilla/mux"
 	"go.uber.org/zap"
 	"io/ioutil"
 	"k8s-http-multiplexer/pkg/cfg"
 	"k8s-http-multiplexer/pkg/k8s"
+	"k8s-http-multiplexer/pkg/logging"
 	"k8s-http-multiplexer/pkg/metrics"
+	"k8s-http-multiplexer/pkg/options"
 	"k8s-http-multiplexer/pkg/web"
 	"k8s.io/client-go/kubernetes"
 	"os"
-	"path/filepath"
 	"strings"
 )
 
 var (
-	clientSet                      *kubernetes.Clientset
-	kubeConfigPath, configFilePath string
-	logger                         *zap.Logger
-	err                            error
-	router                         *mux.Router
+	clientSet *kubernetes.Clientset
+	khmo      *options.K8sHttpMultiplexerOptions
+	logger    *zap.Logger
+	router    *mux.Router
 )
 
 func init() {
-	flag.StringVar(&kubeConfigPath, "kubeConfigPath", filepath.Join(os.Getenv("HOME"), ".kube", "config"),
-		"absolute path of the kubeconfig file, required when non inCluster environment")
-	flag.StringVar(&configFilePath, "configFilePath", "config/sample.yaml", "path of the configuration file")
-	flag.Parse()
-
-	logger, err = zap.NewProduction()
-	if err != nil {
-		panic(err)
-	}
-
+	khmo = options.GetK8sHttpMultiplexerOptions()
+	logger = logging.GetLogger()
 	router = mux.NewRouter()
-
 	bannerBytes, _ := ioutil.ReadFile("banner.txt")
 	banner.Init(os.Stdout, true, false, strings.NewReader(string(bannerBytes)))
 }
 
 func main() {
-	cfg.ParseConfig(configFilePath)
+	cfg.ParseConfig(khmo.ConfigFilePath)
 
 	logger.Info("initializing kube client")
-	restConfig, err := k8s.GetConfig(cfg.Cfg.MasterUrl, kubeConfigPath, cfg.Cfg.InCluster)
+	restConfig, err := k8s.GetConfig(cfg.Cfg.MasterUrl, khmo.KubeConfigPath, cfg.Cfg.InCluster)
 	if err != nil {
 		panic(err)
 	}

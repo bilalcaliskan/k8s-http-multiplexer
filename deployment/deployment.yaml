@@ -20,8 +20,10 @@ spec:
       containers:
         - name: k8s-http-multiplexer
           image: docker.io/bilalcaliskan/k8s-http-multiplexer:latest
-          args: ["-configFilePath", "/opt/cfg/cfg.yaml"]
           command: ["./main"]
+          args: [
+              "-configFilePath", "/opt/cfg/cfg.yaml"
+          ]
           ports:
             - containerPort: 3000
           volumeMounts:
