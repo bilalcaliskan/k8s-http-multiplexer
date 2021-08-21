@@ -6,8 +6,8 @@ import (
 	"github.com/gorilla/mux"
 	"go.uber.org/zap"
 	"io/ioutil"
-	"k8s-http-multiplexer/pkg/cfg"
-	"k8s-http-multiplexer/pkg/k8s"
+	"k8s-http-multiplexer/internal/cfg"
+	"k8s-http-multiplexer/internal/k8s"
 	"net/http"
 )
 

@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"github.com/gorilla/mux"
 	"go.uber.org/zap"
-	"k8s-http-multiplexer/pkg/cfg"
+	"k8s-http-multiplexer/internal/cfg"
 	"net/http"
 	"time"
 )

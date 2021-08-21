@@ -5,7 +5,7 @@ import (
 	"github.com/gorilla/mux"
 	"github.com/prometheus/client_golang/prometheus/promhttp"
 	"go.uber.org/zap"
-	config2 "k8s-http-multiplexer/pkg/cfg"
+	config2 "k8s-http-multiplexer/internal/cfg"
 	"net/http"
 	"time"
 )

@@ -3,7 +3,7 @@ package k8s
 import (
 	"fmt"
 	"go.uber.org/zap"
-	"k8s-http-multiplexer/pkg/cfg"
+	"k8s-http-multiplexer/internal/cfg"
 	v1 "k8s.io/api/core/v1"
 	"k8s.io/apimachinery/pkg/util/wait"
 	"k8s.io/client-go/informers"
