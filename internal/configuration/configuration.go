@@ -1,10 +1,11 @@
-package cfg
+package configuration
 
 import (
-	"go.uber.org/zap"
-	"gopkg.in/yaml.v2"
 	"io/ioutil"
 	"path/filepath"
+
+	"go.uber.org/zap"
+	"gopkg.in/yaml.v2"
 )
 
 var (
@@ -34,5 +35,5 @@ func ParseConfig(configFilePath string) {
 		panic(err)
 	}
 
-	logger.Info("successfully parsed cfg file", zap.Int("request_count", len(Cfg.Requests)))
+	logger.Info("successfully parsed configuration file", zap.Int("request_count", len(Cfg.Requests)))
 }

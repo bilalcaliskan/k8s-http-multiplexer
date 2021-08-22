@@ -2,12 +2,13 @@ package metrics
 
 import (
 	"fmt"
+	config2 "k8s-http-multiplexer/internal/configuration"
+	"net/http"
+	"time"
+
 	"github.com/gorilla/mux"
 	"github.com/prometheus/client_golang/prometheus/promhttp"
 	"go.uber.org/zap"
-	config2 "k8s-http-multiplexer/internal/cfg"
-	"net/http"
-	"time"
 )
 
 // TODO: Generate custom metrics, check below:

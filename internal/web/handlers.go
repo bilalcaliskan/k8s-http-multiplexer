@@ -3,19 +3,20 @@ package web
 import (
 	"encoding/json"
 	"fmt"
-	"github.com/gorilla/mux"
-	"go.uber.org/zap"
 	"io/ioutil"
-	"k8s-http-multiplexer/internal/cfg"
+	"k8s-http-multiplexer/internal/configuration"
 	"k8s-http-multiplexer/internal/k8s"
 	"net/http"
+
+	"github.com/gorilla/mux"
+	"go.uber.org/zap"
 )
 
 func getHandler(w http.ResponseWriter, r *http.Request) {
 	var successCount int
 	var responseBody string
 
-	found, configRequest := cfg.Cfg.GetRequest(r.Method, r.RequestURI)
+	found, configRequest := configuration.Cfg.GetRequest(r.Method, r.RequestURI)
 	if !found {
 		return
 	}
@@ -70,7 +71,7 @@ func getHandler(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 
 	if !configRequest.ReturnResponseBody {
-		response := cfg.Response{
+		response := configuration.Response{
 			TargetCount:  len(pods),
 			SuccessCount: successCount,
 		}
@@ -102,7 +103,7 @@ func postHandler(w http.ResponseWriter, r *http.Request) {
 
 func registerHandlers(router *mux.Router) {
 	var count int
-	for _, v := range cfg.Cfg.Requests {
+	for _, v := range configuration.Cfg.Requests {
 		if v.Method == "GET" {
 			router.HandleFunc(v.URI, getHandler).Methods("GET").Schemes("http").Name("get")
 			count++

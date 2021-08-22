@@ -12,8 +12,7 @@ requests:
     uri: /
     label: app=nginx-a
     # optional targetPort field. Defaults to .Spec.Containers[0].Ports[0].ContainerPort. No need if you have single
-    # container in the pod
-    # TODO: Uncomment for out of cluster
+    # container in the pod. Set as NodePort for out-of-cluster access.
     targetPort: 80
     # targetPort: 30184
     basicAuth: false
@@ -23,8 +22,10 @@ requests:
   - method: GET
     uri: /foo
     label: app=nginx-b
-    # optional targetPort field. Defaults to .Spec.Containers[0].Ports[0].ContainerPort
+    # optional targetPort field. Defaults to .Spec.Containers[0].Ports[0].ContainerPort. No need if you have single
+    # container in the pod. Set as NodePort for out-of-cluster access.
     targetPort: 80
+    # targetPort: 30185
     basicAuth: false
     returnResponpseBody: true
     headers: [ ]
@@ -32,8 +33,10 @@ requests:
   - method: GET
     uri: /foo2
     label: app=nginx-c
-    # optional targetPort field. Defaults to .Spec.Containers[0].Ports[0].ContainerPort
+    # optional targetPort field. Defaults to .Spec.Containers[0].Ports[0].ContainerPort. No need if you have single
+    # container in the pod. Set as NodePort for out-of-cluster access.
     targetPort: 80
+    # targetPort: 30186
     basicAuth: false
     returnResponpseBody: true
     headers: [ ]

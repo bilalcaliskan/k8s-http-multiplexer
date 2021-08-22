@@ -1,19 +1,20 @@
 package main
 
 import (
-	"github.com/dimiro1/banner"
-	"github.com/gorilla/mux"
-	"go.uber.org/zap"
 	"io/ioutil"
-	"k8s-http-multiplexer/internal/cfg"
+	"k8s-http-multiplexer/internal/configuration"
 	"k8s-http-multiplexer/internal/k8s"
 	"k8s-http-multiplexer/internal/logging"
 	"k8s-http-multiplexer/internal/metrics"
 	"k8s-http-multiplexer/internal/options"
 	"k8s-http-multiplexer/internal/web"
-	"k8s.io/client-go/kubernetes"
 	"os"
 	"strings"
+
+	"github.com/dimiro1/banner"
+	"github.com/gorilla/mux"
+	"go.uber.org/zap"
+	"k8s.io/client-go/kubernetes"
 )
 
 var (
@@ -32,10 +33,10 @@ func init() {
 }
 
 func main() {
-	cfg.ParseConfig(khmo.ConfigFilePath)
+	configuration.ParseConfig(khmo.ConfigFilePath)
 
 	logger.Info("initializing kube client")
-	restConfig, err := k8s.GetConfig(cfg.Cfg.MasterUrl, khmo.KubeConfigPath, cfg.Cfg.InCluster)
+	restConfig, err := k8s.GetConfig(configuration.Cfg.MasterUrl, khmo.KubeConfigPath, configuration.Cfg.InCluster)
 	if err != nil {
 		panic(err)
 	}

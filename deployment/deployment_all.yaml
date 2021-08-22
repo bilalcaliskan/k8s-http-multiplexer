@@ -1,0 +1,63 @@
+---
+
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: multiplexer
+  namespace: default
+
+---
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: k8s-http-multiplexer
+  namespace: default
+  labels:
+    app: k8s-http-multiplexer
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: k8s-http-multiplexer
+  template:
+    metadata:
+      labels:
+        app: k8s-http-multiplexer
+    spec:
+      containers:
+        - name: k8s-http-multiplexer
+          image: docker.io/bilalcaliskan/k8s-http-multiplexer:latest
+          command: ["./main"]
+          args: [
+              "-configFilePath", "/opt/config/config.yaml"
+          ]
+          ports:
+            - containerPort: 3000
+          volumeMounts:
+            - name: configuration
+              mountPath: "/opt/config"
+              readOnly: true
+      serviceAccountName: multiplexer
+      volumes:
+        - name: config
+          configMap:
+            name: k8s-http-multiplexer-configuration
+
+---
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: k8s-http-multiplexer
+  namespace: default
+spec:
+  type: NodePort
+  selector:
+    app: k8s-http-multiplexer
+  ports:
+    - port: 3000
+      targetPort: 3000
+      # Optional field
+      # By default and for convenience, the Kubernetes control plane will allocate a port from a range (default: 30000-32767)
+      # nodePort: 30007

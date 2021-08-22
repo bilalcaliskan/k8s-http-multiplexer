@@ -1,4 +1,4 @@
-package cfg
+package configuration
 
 // Config is the representation of parsed config file
 type Config struct {

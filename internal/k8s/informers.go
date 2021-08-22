@@ -2,14 +2,15 @@ package k8s
 
 import (
 	"fmt"
+	"k8s-http-multiplexer/internal/configuration"
+	"time"
+
 	"go.uber.org/zap"
-	"k8s-http-multiplexer/internal/cfg"
 	v1 "k8s.io/api/core/v1"
 	"k8s.io/apimachinery/pkg/util/wait"
 	"k8s.io/client-go/informers"
 	"k8s.io/client-go/kubernetes"
 	"k8s.io/client-go/tools/cache"
-	"time"
 )
 
 // TargetPods keeps the pointer of TargetPod items. It is the representation of target ip addresses, ports information
@@ -24,7 +25,7 @@ func RunPodInformer(clientSet *kubernetes.Clientset, logger *zap.Logger) {
 		AddFunc: func(obj interface{}) {
 			pod := obj.(*v1.Pod)
 			labelMap := pod.GetLabels()
-			for _, request := range cfg.Cfg.Requests {
+			for _, request := range configuration.Cfg.Requests {
 				if labelExists(labelMap, request.Label) && pod.Status.PodIP != "" {
 					logger.Info("label found in the labelMap", zap.String("label", request.Label),
 						zap.Any("labelMap", labelMap))
@@ -62,7 +63,7 @@ func RunPodInformer(clientSet *kubernetes.Clientset, logger *zap.Logger) {
 				return
 			}
 
-			for _, request := range cfg.Cfg.Requests {
+			for _, request := range configuration.Cfg.Requests {
 				if labelExists(oldLabelMap, request.Label) && labelExists(newLabelMap, request.Label) {
 					if oldPod.Status.PodIP == "" && newPod.Status.PodIP != "" {
 						logger.Info("assigned an ip address to the pod", zap.String("addr", newPod.Status.PodIP))
@@ -89,7 +90,7 @@ func RunPodInformer(clientSet *kubernetes.Clientset, logger *zap.Logger) {
 		DeleteFunc: func(obj interface{}) {
 			pod := obj.(*v1.Pod)
 			labelMap := pod.GetLabels()
-			for _, request := range cfg.Cfg.Requests {
+			for _, request := range configuration.Cfg.Requests {
 				if labelExists(labelMap, request.Label) {
 					containerPort := pod.Spec.Containers[0].Ports[0].ContainerPort
 					if request.TargetPort != 0 {

@@ -3,7 +3,7 @@
 apiVersion: v1
 kind: ConfigMap
 metadata:
-  name: k8s-http-multiplexer-cfg
+  name: k8s-http-multiplexer-configuration
   namespace: default
 data:
   config.yaml: |
