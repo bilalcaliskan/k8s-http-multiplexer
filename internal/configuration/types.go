@@ -8,7 +8,6 @@ type Config struct {
 	MasterUrl           string    `yaml:"masterUrl"`
 	ReadTimeoutSeconds  int       `yaml:"readTimeoutSeconds"`
 	WriteTimeoutSeconds int       `yaml:"writeTimeoutSeconds"`
-	InCluster           bool      `yaml:"inCluster"`
 	Requests            []Request `yaml:"requests"`
 }
 

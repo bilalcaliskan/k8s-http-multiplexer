@@ -36,7 +36,7 @@ func main() {
 	configuration.ParseConfig(khmo.ConfigFilePath)
 
 	logger.Info("initializing kube client")
-	restConfig, err := k8s.GetConfig(configuration.Cfg.MasterUrl, khmo.KubeConfigPath, configuration.Cfg.InCluster)
+	restConfig, err := k8s.GetConfig(configuration.Cfg.MasterUrl, khmo.KubeConfigPath, khmo.InCluster)
 	if err != nil {
 		panic(err)
 	}

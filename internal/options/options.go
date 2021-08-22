@@ -1,9 +1,10 @@
 package options
 
 import (
-	"github.com/spf13/pflag"
 	"os"
 	"path/filepath"
+
+	"github.com/spf13/pflag"
 )
 
 var khmo = &K8sHttpMultiplexerOptions{}
@@ -24,6 +25,8 @@ type K8sHttpMultiplexerOptions struct {
 	KubeConfigPath string
 	// ConfigFilePath is the path of the application to properly run
 	ConfigFilePath string
+	// InCluster is the boolean variable if k8s-http-multiplexer is running inside k8s cluster or not
+	InCluster bool
 }
 
 func (khmo *K8sHttpMultiplexerOptions) addFlags(fs *pflag.FlagSet) {
@@ -31,4 +34,7 @@ func (khmo *K8sHttpMultiplexerOptions) addFlags(fs *pflag.FlagSet) {
 		"absolute path of the kubeconfig file, required when non inCluster environment")
 	fs.StringVar(&khmo.ConfigFilePath, "configFilePath", "config/sample.yaml",
 		"path of the configuration file")
+	fs.BoolVar(&khmo.InCluster, "inCluster", true,
+		"boolean variable if k8s-http-multiplexer is running inside k8s cluster or not, required for debugging "+
+			"purpose")
 }

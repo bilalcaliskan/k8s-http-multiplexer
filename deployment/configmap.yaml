@@ -13,7 +13,6 @@ data:
     masterUrl: ""
     readTimeoutSeconds: 10
     writeTimeoutSeconds: 10
-    inCluster: true
     requests:
       - method: GET
         uri: /

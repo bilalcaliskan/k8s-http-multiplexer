@@ -24,6 +24,8 @@ Here is the list of arguments you can pass:
 ```
 --kubeConfigPath        Kube config file path to access cluster. Required while running out of Kubernetes cluster.
 --configFilePath        Path of the config file of k8s-http-multiplexer to read, defaults to /opt/config/config.yaml
+--inCluster             Boolean variable if k8s-http-multiplexer is running inside k8s cluster or not, required for
+                        debugging purpose. Defaults to true.
 ```
 
 #### Config file
