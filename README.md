@@ -5,6 +5,8 @@
 This is a project for multiplexing HTTP requests inside a Kubernetes cluster. When you need to send a HTTP request to each container in
 a cluster cluster with a single HTTP request, k8s-http-multiplexer is what you need exactly.
 
+> **k8s-http-multiplexer should be running inside a target Kubernetes cluster to properly operate**
+
 ### Deployment
 K8s-http-multiplexer can be deployed as Kubernetes deployment or standalone installation. You can use [sample deployment file](deployment/deployment_all.yaml) to deploy your Kubernetes cluster.
 Before make deployment, you should deploy the [sample configmap](deployment/configmap.yaml) to the cluster. k8s-http-multiplexer reads that
