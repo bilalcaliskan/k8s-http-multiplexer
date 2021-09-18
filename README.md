@@ -3,7 +3,6 @@
 [![Docker pulls](https://img.shields.io/docker/pulls/bilalcaliskan/k8s-http-multiplexer)](https://hub.docker.com/r/bilalcaliskan/k8s-http-multiplexer/)
 [![Go Report Card](https://goreportcard.com/badge/github.com/bilalcaliskan/k8s-http-multiplexer)](https://goreportcard.com/report/github.com/bilalcaliskan/k8s-http-multiplexer)
 [![codecov](https://codecov.io/gh/bilalcaliskan/k8s-http-multiplexer/branch/master/graph/badge.svg)](https://codecov.io/gh/bilalcaliskan/k8s-http-multiplexer)
-[![Release](https://img.shields.io/github/release/bilalcaliskan/k8s-http-multiplexer.svg)](https://github.com/bilalcaliskan/k8s-http-multiplexer/releases/latest)
 [![Go version](https://img.shields.io/github/go-mod/go-version/bilalcaliskan/k8s-http-multiplexer)](https://github.com/bilalcaliskan/k8s-http-multiplexer)
 [![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://opensource.org/licenses/Apache-2.0)
 
