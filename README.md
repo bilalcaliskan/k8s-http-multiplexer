@@ -3,6 +3,9 @@
 [![Docker pulls](https://img.shields.io/docker/pulls/bilalcaliskan/k8s-http-multiplexer)](https://hub.docker.com/r/bilalcaliskan/k8s-http-multiplexer/)
 [![Go Report Card](https://goreportcard.com/badge/github.com/bilalcaliskan/k8s-http-multiplexer)](https://goreportcard.com/report/github.com/bilalcaliskan/k8s-http-multiplexer)
 [![codecov](https://codecov.io/gh/bilalcaliskan/k8s-http-multiplexer/branch/master/graph/badge.svg)](https://codecov.io/gh/bilalcaliskan/k8s-http-multiplexer)
+[![Release](https://img.shields.io/github/release/bilalcaliskan/k8s-http-multiplexer.svg)](https://github.com/bilalcaliskan/k8s-http-multiplexer/releases/latest)
+[![Go version](https://img.shields.io/github/go-mod/go-version/bilalcaliskan/k8s-http-multiplexer)](https://github.com/bilalcaliskan/k8s-http-multiplexer)
+[![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://opensource.org/licenses/Apache-2.0)
 
 This is a project for multiplexing HTTP requests inside a Kubernetes cluster. When you need to send a HTTP request to each container in
 a cluster cluster with a single HTTP request, k8s-http-multiplexer is what you need exactly.
@@ -32,8 +35,12 @@ You can inspect [sample config file](config/sample.yaml) and [sample configmap o
 
 ## Development
 This project requires below tools while developing:
+- [Golang 1.16](https://golang.org/doc/go1.16)
 - [pre-commit](https://pre-commit.com/)
 - [golangci-lint](https://golangci-lint.run/usage/install/) - required by [pre-commit](https://pre-commit.com/)
+
+## License
+Apache License 2.0
 
 ## How k8s-http-multiplexer handles authentication/authorization with kube-apiserver?
 
