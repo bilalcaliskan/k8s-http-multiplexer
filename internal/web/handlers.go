@@ -12,11 +12,20 @@ import (
 	"go.uber.org/zap"
 )
 
+func pingHandler(w http.ResponseWriter, r *http.Request) {
+	if _, err := w.Write([]byte("OK")); err != nil {
+		logger.Error("an error occurred while writing response", zap.Error(err))
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+	w.WriteHeader(200)
+}
+
 func getHandler(w http.ResponseWriter, r *http.Request) {
 	var successCount int
 	var responseBody string
 
-	found, configRequest := configuration.Cfg.GetRequest(r.Method, r.RequestURI)
+	found, configRequest := config.GetRequest(r.Method, r.RequestURI)
 	if !found {
 		return
 	}
@@ -103,7 +112,7 @@ func postHandler(w http.ResponseWriter, r *http.Request) {
 
 func registerHandlers(router *mux.Router) {
 	var count int
-	for _, v := range configuration.Cfg.Requests {
+	for _, v := range config.Requests {
 		if v.Method == "GET" {
 			router.HandleFunc(v.URI, getHandler).Methods("GET").Schemes("http").Name("get")
 			count++
@@ -112,5 +121,6 @@ func registerHandlers(router *mux.Router) {
 			count++
 		}
 	}
+	router.HandleFunc("/ping", pingHandler).Methods("GET").Schemes("http").Name("ping")
 	logger.Info("handlers registered", zap.Int("count", count))
 }

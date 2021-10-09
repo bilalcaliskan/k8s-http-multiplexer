@@ -14,6 +14,7 @@ var (
 	client *http.Client
 	logger *zap.Logger
 	err    error
+	config configuration.Config
 )
 
 func init() {
@@ -22,17 +23,18 @@ func init() {
 		panic(err)
 	}
 	client = &http.Client{}
+	config = configuration.GetConfig()
 }
 
 // RunWebServer spins up webserver to handle incoming HTTP requests
-func RunWebServer(router *mux.Router) {
+func RunWebServer(router *mux.Router) error {
 	registerHandlers(router)
 	webServer := &http.Server{
 		Handler:      router,
-		Addr:         fmt.Sprintf(":%d", configuration.Cfg.Port),
-		WriteTimeout: time.Duration(int32(configuration.Cfg.WriteTimeoutSeconds)) * time.Second,
-		ReadTimeout:  time.Duration(int32(configuration.Cfg.ReadTimeoutSeconds)) * time.Second,
+		Addr:         fmt.Sprintf(":%d", config.Port),
+		WriteTimeout: time.Duration(int32(config.WriteTimeoutSeconds)) * time.Second,
+		ReadTimeout:  time.Duration(int32(config.ReadTimeoutSeconds)) * time.Second,
 	}
-	logger.Info("web server is up and running", zap.Int("port", configuration.Cfg.Port))
-	panic(webServer.ListenAndServe())
+	logger.Info("web server is up and running", zap.Int("port", config.Port))
+	return webServer.ListenAndServe()
 }

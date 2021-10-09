@@ -22,12 +22,14 @@ var (
 	khmo      *options.K8sHttpMultiplexerOptions
 	logger    *zap.Logger
 	router    *mux.Router
+	config    configuration.Config
 )
 
 func init() {
 	khmo = options.GetK8sHttpMultiplexerOptions()
 	logger = logging.GetLogger()
 	router = mux.NewRouter()
+	config = configuration.GetConfig()
 	bannerBytes, _ := ioutil.ReadFile("banner.txt")
 	banner.Init(os.Stdout, true, false, strings.NewReader(string(bannerBytes)))
 }
@@ -36,7 +38,7 @@ func main() {
 	configuration.ParseConfig(khmo.ConfigFilePath)
 
 	logger.Info("initializing kube client")
-	restConfig, err := k8s.GetConfig(configuration.Cfg.MasterUrl, khmo.KubeConfigPath, khmo.InCluster)
+	restConfig, err := k8s.GetConfig(config.MasterUrl, khmo.KubeConfigPath, khmo.InCluster)
 	if err != nil {
 		panic(err)
 	}
@@ -46,7 +48,15 @@ func main() {
 	}
 	logger.Info("successfully initialized kube client")
 
-	go k8s.RunPodInformer(clientSet, logger)
-	go metrics.RunMetricsServer(router, logger)
-	web.RunWebServer(router)
+	go k8s.RunPodInformer(clientSet)
+	go func() {
+		err := metrics.RunMetricsServer(router)
+		if err != nil {
+			panic(err)
+		}
+	}()
+
+	if err := web.RunWebServer(router); err != nil {
+		panic(err)
+	}
 }

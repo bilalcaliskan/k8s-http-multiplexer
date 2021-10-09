@@ -32,7 +32,7 @@ type K8sHttpMultiplexerOptions struct {
 func (khmo *K8sHttpMultiplexerOptions) addFlags(fs *pflag.FlagSet) {
 	fs.StringVar(&khmo.KubeConfigPath, "kubeConfigPath", filepath.Join(os.Getenv("HOME"), ".kube", "config"),
 		"absolute path of the kubeconfig file, required when non inCluster environment")
-	fs.StringVar(&khmo.ConfigFilePath, "configFilePath", "config/sample.yaml",
+	fs.StringVar(&khmo.ConfigFilePath, "configFilePath", "../../config/sample.yaml",
 		"path of the configuration file")
 	fs.BoolVar(&khmo.InCluster, "inCluster", true,
 		"boolean variable if k8s-http-multiplexer is running inside k8s cluster or not, required for debugging "+

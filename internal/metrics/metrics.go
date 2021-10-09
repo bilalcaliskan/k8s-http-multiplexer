@@ -3,6 +3,7 @@ package metrics
 import (
 	"fmt"
 	config2 "k8s-http-multiplexer/internal/configuration"
+	"k8s-http-multiplexer/internal/logging"
 	"net/http"
 	"time"
 
@@ -15,15 +16,25 @@ import (
 // https://prometheus.io/docs/guides/go-application/
 // https://www.robustperception.io/prometheus-middleware-for-gorilla-mux
 
+var (
+	logger *zap.Logger
+	config config2.Config
+)
+
+func init() {
+	logger = logging.GetLogger()
+	config = config2.GetConfig()
+}
+
 // RunMetricsServer exports metrics
-func RunMetricsServer(router *mux.Router, logger *zap.Logger) {
+func RunMetricsServer(router *mux.Router) error {
 	metricServer := &http.Server{
 		Handler:      router,
-		Addr:         fmt.Sprintf(":%d", config2.Cfg.MetricsPort),
-		WriteTimeout: time.Duration(int32(config2.Cfg.WriteTimeoutSeconds)) * time.Second,
-		ReadTimeout:  time.Duration(int32(config2.Cfg.ReadTimeoutSeconds)) * time.Second,
+		Addr:         fmt.Sprintf(":%d", config.MetricsPort),
+		WriteTimeout: time.Duration(int32(config.WriteTimeoutSeconds)) * time.Second,
+		ReadTimeout:  time.Duration(int32(config.ReadTimeoutSeconds)) * time.Second,
 	}
-	router.Handle(config2.Cfg.MetricsUri, promhttp.Handler())
-	logger.Info("metric server is up and running", zap.Int("port", config2.Cfg.MetricsPort))
-	panic(metricServer.ListenAndServe())
+	router.Handle(config.MetricsUri, promhttp.Handler())
+	logger.Info("metric server is up and running", zap.Int("port", config.MetricsPort))
+	return metricServer.ListenAndServe()
 }
