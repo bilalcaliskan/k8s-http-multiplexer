@@ -8,6 +8,7 @@ import (
 	"k8s-http-multiplexer/internal/metrics"
 	"k8s-http-multiplexer/internal/options"
 	"k8s-http-multiplexer/internal/web"
+	"k8s.io/client-go/rest"
 	"os"
 	"strings"
 
@@ -18,11 +19,13 @@ import (
 )
 
 var (
-	clientSet *kubernetes.Clientset
-	khmo      *options.K8sHttpMultiplexerOptions
-	logger    *zap.Logger
-	router    *mux.Router
-	config    configuration.Config
+	restConfig *rest.Config
+	clientSet  *kubernetes.Clientset
+	err        error
+	khmo       *options.K8sHttpMultiplexerOptions
+	logger     *zap.Logger
+	router     *mux.Router
+	config     configuration.Config
 )
 
 func init() {
@@ -38,25 +41,25 @@ func main() {
 	configuration.ParseConfig(khmo.ConfigFilePath)
 
 	logger.Info("initializing kube client")
-	restConfig, err := k8s.GetConfig(config.MasterUrl, khmo.KubeConfigPath, khmo.InCluster)
-	if err != nil {
+	if restConfig, err = k8s.GetConfig(config.MasterUrl, khmo.KubeConfigPath, khmo.InCluster); err != nil {
 		panic(err)
 	}
-	clientSet, err = k8s.GetClientSet(restConfig)
-	if err != nil {
+
+	logger.Info("initializing client set")
+	if clientSet, err = k8s.GetClientSet(restConfig); err != nil {
 		panic(err)
 	}
+
 	logger.Info("successfully initialized kube client")
 
 	go k8s.RunPodInformer(clientSet)
 	go func() {
-		err := metrics.RunMetricsServer(router)
-		if err != nil {
+		if err = metrics.RunMetricsServer(router); err != nil {
 			panic(err)
 		}
 	}()
 
-	if err := web.RunWebServer(router); err != nil {
+	if err = web.RunWebServer(router); err != nil {
 		panic(err)
 	}
 }
