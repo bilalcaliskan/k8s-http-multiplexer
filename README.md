@@ -9,10 +9,10 @@
 This is a project for multiplexing HTTP requests inside a Kubernetes cluster. When you need to send a HTTP request to each container in
 a cluster cluster with a single HTTP request, k8s-http-multiplexer is what you need exactly.
 
-> **k8s-http-multiplexer should be running inside a target Kubernetes cluster to properly operate**
+Please note that **k8s-http-multiplexer** should be running inside a target Kubernetes cluster to properly operate.
 
 ## Installation
-K8s-http-multiplexer can be deployed as Kubernetes deployment or standalone installation. You can use [sample deployment file](deployment/deployment_all.yaml) to deploy your Kubernetes cluster.
+**k8s-http-multiplexer** can be deployed as Kubernetes deployment or standalone installation. You can use [sample deployment file](deployment/deployment_all.yaml) to deploy your Kubernetes cluster.
 Before make deployment, you should deploy the [sample configmap](deployment/configmap.yaml) to the cluster. k8s-http-multiplexer reads that
 configmap to take proper actions on each HTTP request.
 ```shell
@@ -21,13 +21,13 @@ $ kubectl create -f deployment/deployment_all.yaml
 ```
 
 ## Configuration
-K8s-http-multiplexer can be customized with several command line arguments at the app level, and a configmap at the business level.
+**k8s-http-multiplexer** can be customized with several command line arguments at the app level, and a configmap at the business level.
 Here is the list of arguments you can pass:
 ```
---kubeConfigPath        Kube config file path to access cluster. Required while running out of Kubernetes cluster.
---configFilePath        Path of the config file of k8s-http-multiplexer to read, defaults to /opt/config/config.yaml
---inCluster             Boolean variable if k8s-http-multiplexer is running inside k8s cluster or not, required for
-                        debugging purpose. Defaults to true.
+--kubeConfigPath    string      Kube config file path to access cluster. Required while running out of Kubernetes cluster.
+--configFilePath    string      Path of the config file of k8s-http-multiplexer to read, defaults to /opt/config/config.yaml
+--inCluster         bool        Boolean variable if k8s-http-multiplexer is running inside k8s cluster or not, required for
+                                debugging purpose. Defaults to true.
 ```
 
 You can inspect [sample config file](config/sample.yaml) and [sample configmap object](deployment/configmap.yaml).
