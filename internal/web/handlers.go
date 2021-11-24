@@ -46,8 +46,7 @@ func getHandler(w http.ResponseWriter, r *http.Request) {
 		}
 
 		if configRequest.BasicAuth {
-			logger.Info("setting basic auth on remote request", zap.String("username", configRequest.Username),
-				zap.String("password", configRequest.Password))
+			logger.Info("setting basic auth on remote request", zap.String("username", configRequest.Username))
 			remoteRequest.SetBasicAuth(configRequest.Username, configRequest.Password)
 		}
 
