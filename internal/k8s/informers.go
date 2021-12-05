@@ -14,6 +14,8 @@ import (
 	"k8s.io/client-go/tools/cache"
 )
 
+const PodUrl = "http://%s:%d"
+
 // TargetPods keeps the pointer of TargetPod items. It is the representation of target ip addresses, ports information
 var (
 	TargetPods []*TargetPod
@@ -45,9 +47,8 @@ func RunPodInformer(clientSet *kubernetes.Clientset) {
 						containerPort = request.TargetPort
 					}
 
-					// TODO: Uncomment for out of cluster
-					addr := fmt.Sprintf("http://%s:%d", pod.Status.PodIP, containerPort)
-					// addr := fmt.Sprintf("http://%s:%d", "192.168.99.114", containerPort)
+					addr := fmt.Sprintf(PodUrl, pod.Status.PodIP, containerPort)
+					// addr := fmt.Sprintf(PodUrl, "192.168.99.114", containerPort)
 
 					targetPod := TargetPod{
 						Addr:  addr,
@@ -83,7 +84,7 @@ func RunPodInformer(clientSet *kubernetes.Clientset) {
 							containerPort = request.TargetPort
 						}
 
-						addr := fmt.Sprintf("http://%s:%d", newPod.Status.PodIP, containerPort)
+						addr := fmt.Sprintf(PodUrl, newPod.Status.PodIP, containerPort)
 						targetPod := TargetPod{
 							Addr:  addr,
 							Label: request.Label,
@@ -107,7 +108,7 @@ func RunPodInformer(clientSet *kubernetes.Clientset) {
 						containerPort = request.TargetPort
 					}
 
-					addr := fmt.Sprintf("http://%s:%d", pod.Status.PodIP, containerPort)
+					addr := fmt.Sprintf(PodUrl, pod.Status.PodIP, containerPort)
 					targetPod := TargetPod{
 						Addr:  addr,
 						Label: request.Label,
