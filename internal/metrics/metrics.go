@@ -12,10 +12,6 @@ import (
 	"go.uber.org/zap"
 )
 
-// TODO: Generate custom metrics, check below:
-// https://prometheus.io/docs/guides/go-application/
-// https://www.robustperception.io/prometheus-middleware-for-gorilla-mux
-
 var (
 	logger *zap.Logger
 	config config2.Config

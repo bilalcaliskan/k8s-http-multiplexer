@@ -12,9 +12,11 @@ import (
 	"go.uber.org/zap"
 )
 
+const ErrWriteResponse = "an error occurred while writing response"
+
 func pingHandler(w http.ResponseWriter, r *http.Request) {
 	if _, err := w.Write([]byte("OK")); err != nil {
-		logger.Error("an error occurred while writing response", zap.Error(err))
+		logger.Error(ErrWriteResponse, zap.Error(err))
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
@@ -92,13 +94,13 @@ func getHandler(w http.ResponseWriter, r *http.Request) {
 		}
 
 		if _, err = w.Write(responseBytes); err != nil {
-			logger.Error("an error occurred while writing response", zap.Error(err))
+			logger.Error(ErrWriteResponse, zap.Error(err))
 			http.Error(w, err.Error(), http.StatusInternalServerError)
 			return
 		}
 	} else {
 		if _, err = w.Write([]byte(responseBody)); err != nil {
-			logger.Error("an error occurred while writing response", zap.Error(err))
+			logger.Error(ErrWriteResponse, zap.Error(err))
 			http.Error(w, err.Error(), http.StatusInternalServerError)
 			return
 		}
