@@ -2,33 +2,38 @@ package metrics
 
 import (
 	"fmt"
-	"log"
+	"github.com/stretchr/testify/assert"
+	"io/ioutil"
+	"net"
 	"net/http"
 	"testing"
 	"time"
-
-	"github.com/gorilla/mux"
 )
 
 func TestRunMetricsServer(t *testing.T) {
-	errChan := make(chan error, 1)
+	var conn net.Conn
 
-	go func() {
-		router := mux.NewRouter()
-		err := RunMetricsServer(router)
-		errChan <- err
+	defer func() {
+		err := conn.Close()
+		assert.Nil(t, err)
 	}()
 
-	select {
-	case c := <-errChan:
-		t.Error(c)
-	case <-time.After(10 * time.Second):
-		_, err := http.Get(fmt.Sprintf("http://localhost:%d/%s", config.MetricsPort, config.MetricsUri))
-		if err != nil {
-			log.Fatalln(err)
-		}
+	go func() {
+		err := RunMetricsServer()
+		assert.Nil(t, err)
+	}()
 
-		t.Log("success")
-		return
+	for {
+		time.Sleep(1 * time.Second)
+		conn, _ = net.DialTimeout("tcp", fmt.Sprintf("127.0.0.1:%d", config.MetricsPort), 10*time.Second)
+		if conn != nil {
+			break
+		}
 	}
+
+	resp, err := http.Get(fmt.Sprintf("http://127.0.0.1:%d%s", config.MetricsPort, config.MetricsUri))
+	assert.Nil(t, err)
+
+	_, err = ioutil.ReadAll(resp.Body)
+	assert.Nil(t, err)
 }

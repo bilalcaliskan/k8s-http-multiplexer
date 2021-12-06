@@ -13,7 +13,6 @@ import (
 	"strings"
 
 	"github.com/dimiro1/banner"
-	"github.com/gorilla/mux"
 	"go.uber.org/zap"
 	"k8s.io/client-go/kubernetes"
 )
@@ -24,22 +23,18 @@ var (
 	err        error
 	khmo       *options.K8sHttpMultiplexerOptions
 	logger     *zap.Logger
-	router     *mux.Router
 	config     configuration.Config
 )
 
 func init() {
 	khmo = options.GetK8sHttpMultiplexerOptions()
 	logger = logging.GetLogger()
-	router = mux.NewRouter()
 	config = configuration.GetConfig()
 	bannerBytes, _ := ioutil.ReadFile("banner.txt")
 	banner.Init(os.Stdout, true, false, strings.NewReader(string(bannerBytes)))
 }
 
 func main() {
-	configuration.ParseConfig(khmo.ConfigFilePath)
-
 	logger.Info("initializing kube client")
 	if restConfig, err = k8s.GetConfig(config.MasterUrl, khmo.KubeConfigPath, khmo.InCluster); err != nil {
 		panic(err)
@@ -47,19 +42,19 @@ func main() {
 
 	logger.Info("initializing client set")
 	if clientSet, err = k8s.GetClientSet(restConfig); err != nil {
-		panic(err)
+		logger.Fatal("fatal error occured while getting clientset", zap.Error(err))
 	}
 
 	logger.Info("successfully initialized kube client")
 
 	go k8s.RunPodInformer(clientSet)
 	go func() {
-		if err = metrics.RunMetricsServer(router); err != nil {
-			panic(err)
+		if err = metrics.RunMetricsServer(); err != nil {
+			logger.Fatal("fatal error occured while spinning metric server", zap.Error(err))
 		}
 	}()
 
-	if err = web.RunWebServer(router); err != nil {
-		panic(err)
+	if err = web.RunWebServer(); err != nil {
+		logger.Fatal("fatal error occured while spinning web server", zap.Error(err))
 	}
 }
