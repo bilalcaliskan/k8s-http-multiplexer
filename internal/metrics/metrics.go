@@ -2,7 +2,7 @@ package metrics
 
 import (
 	"fmt"
-	config2 "k8s-http-multiplexer/internal/configuration"
+	"k8s-http-multiplexer/internal/configuration"
 	"k8s-http-multiplexer/internal/logging"
 	"net/http"
 	"time"
@@ -14,16 +14,17 @@ import (
 
 var (
 	logger *zap.Logger
-	config config2.Config
+	config configuration.Config
 )
 
 func init() {
 	logger = logging.GetLogger()
-	config = config2.GetConfig()
+	config = configuration.GetConfig()
 }
 
 // RunMetricsServer exports metrics
-func RunMetricsServer(router *mux.Router) error {
+func RunMetricsServer() error {
+	router := mux.NewRouter()
 	metricServer := &http.Server{
 		Handler:      router,
 		Addr:         fmt.Sprintf(":%d", config.MetricsPort),

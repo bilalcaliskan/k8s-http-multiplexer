@@ -27,7 +27,8 @@ func init() {
 }
 
 // RunWebServer spins up webserver to handle incoming HTTP requests
-func RunWebServer(router *mux.Router) error {
+func RunWebServer() error {
+	router := mux.NewRouter()
 	registerHandlers(router)
 	webServer := &http.Server{
 		Handler:      router,
