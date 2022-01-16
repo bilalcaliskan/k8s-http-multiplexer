@@ -1,5 +1,5 @@
 lint:
-	golangci-lint run --timeout 2m0s
+	golangci-lint run --timeout 3m0s
 
 fmt:
 	go fmt ./...
@@ -42,7 +42,7 @@ cross-compile:
 	GOOS=windows GOARCH=amd64 go build -o bin/main-windows-amd64 cmd/k8s-http-multiplexer/main.go
 
 upgrade-direct-deps:
-	for item in `egrep -v "indirect|k8s.io" go.mod | grep '/' | cut -d ' ' -f 1`; do \
+	for item in `egrep -v "indirect" go.mod | grep '/' | cut -d ' ' -f 1`; do \
 		echo "trying to upgrade direct dependency $$item" ; \
 		go get -u $$item ; \
   	done

@@ -35,7 +35,7 @@ You can inspect [sample config file](config/sample.yaml) and [sample configmap o
 
 ## Development
 This project requires below tools while developing:
-- [Golang 1.16](https://golang.org/doc/go1.16)
+- [Golang 1.17](https://golang.org/doc/go1.17)
 - [pre-commit](https://pre-commit.com/)
 - [golangci-lint](https://golangci-lint.run/usage/install/) - required by [pre-commit](https://pre-commit.com/)
 
