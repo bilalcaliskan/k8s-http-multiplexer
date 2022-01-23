@@ -3,7 +3,10 @@
 [![Docker pulls](https://img.shields.io/docker/pulls/bilalcaliskan/k8s-http-multiplexer)](https://hub.docker.com/r/bilalcaliskan/k8s-http-multiplexer/)
 [![Go Report Card](https://goreportcard.com/badge/github.com/bilalcaliskan/k8s-http-multiplexer)](https://goreportcard.com/report/github.com/bilalcaliskan/k8s-http-multiplexer)
 [![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=bilalcaliskan_k8s-http-multiplexer&metric=alert_status)](https://sonarcloud.io/summary/new_code?id=bilalcaliskan_k8s-http-multiplexer)
-[![codecov](https://codecov.io/gh/bilalcaliskan/k8s-http-multiplexer/branch/master/graph/badge.svg)](https://codecov.io/gh/bilalcaliskan/k8s-http-multiplexer)
+[![Reliability Rating](https://sonarcloud.io/api/project_badges/measure?project=bilalcaliskan_k8s-http-multiplexer&metric=reliability_rating)](https://sonarcloud.io/summary/new_code?id=bilalcaliskan_k8s-http-multiplexer)
+[![Maintainability Rating](https://sonarcloud.io/api/project_badges/measure?project=bilalcaliskan_k8s-http-multiplexer&metric=sqale_rating)](https://sonarcloud.io/summary/new_code?id=bilalcaliskan_k8s-http-multiplexer)
+[![Security Rating](https://sonarcloud.io/api/project_badges/measure?project=bilalcaliskan_k8s-http-multiplexer&metric=security_rating)](https://sonarcloud.io/summary/new_code?id=bilalcaliskan_k8s-http-multiplexer)
+[![Coverage](https://sonarcloud.io/api/project_badges/measure?project=bilalcaliskan_k8s-http-multiplexer&metric=coverage)](https://sonarcloud.io/summary/new_code?id=bilalcaliskan_k8s-http-multiplexer)
 [![Go version](https://img.shields.io/github/go-mod/go-version/bilalcaliskan/k8s-http-multiplexer)](https://github.com/bilalcaliskan/k8s-http-multiplexer)
 [![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://opensource.org/licenses/Apache-2.0)
 
