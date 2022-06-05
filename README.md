@@ -1,4 +1,4 @@
-# K8s Http Multiplexer
+# K8S Http Multiplexer
 [![CI](https://github.com/bilalcaliskan/k8s-http-multiplexer/workflows/CI/badge.svg?event=push)](https://github.com/bilalcaliskan/k8s-http-multiplexer/actions?query=workflow%3ACI)
 [![Docker pulls](https://img.shields.io/docker/pulls/bilalcaliskan/k8s-http-multiplexer)](https://hub.docker.com/r/bilalcaliskan/k8s-http-multiplexer/)
 [![Go Report Card](https://goreportcard.com/badge/github.com/bilalcaliskan/k8s-http-multiplexer)](https://goreportcard.com/report/github.com/bilalcaliskan/k8s-http-multiplexer)
@@ -11,7 +11,7 @@
 [![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://opensource.org/licenses/Apache-2.0)
 
 This is a project for multiplexing HTTP requests inside a Kubernetes cluster. When you need to send a HTTP request to each container in
-a cluster cluster with a single HTTP request, k8s-http-multiplexer is what you need exactly.
+a cluster with a single HTTP request, k8s-http-multiplexer is what you need exactly.
 
 Please note that **k8s-http-multiplexer** should be running inside a target Kubernetes cluster to properly operate.
 
